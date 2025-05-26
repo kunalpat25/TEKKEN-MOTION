@@ -1,0 +1,11 @@
+{
+  "up": "__special_key__up",
+  "down": "__special_key__down",
+  "left": "__special_key__left",
+  "right": "__special_key__right",
+  "punch": "a",
+  "kick": "x",
+  "kick2": "z",
+  "block": "s",
+  "grab": "d"
+}
