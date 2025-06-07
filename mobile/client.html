@@ -15,7 +15,8 @@
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
             video.srcObject = stream;
-            const ws = new WebSocket(`ws://${location.host}/ws`);
+            const ws_scheme = location.protocol === "https:" ? "wss" : "ws";
+            const ws = new WebSocket(`${ws_scheme}://${location.host}/ws`);
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             ws.onopen = () => {

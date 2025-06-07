@@ -47,7 +47,7 @@ def _frame_generator():
         yield frame
 
 
-def start(host: str = "0.0.0.0", port: int = 8000):
+def start(host: str = "0.0.0.0", port: int = 8000, use_https: bool = True):
     def run_controller():
         controller.start(frame_generator=_frame_generator())
 
@@ -55,8 +55,13 @@ def start(host: str = "0.0.0.0", port: int = 8000):
     controller_thread.start()
 
     import uvicorn
-
-    uvicorn.run(app, host=host, port=port)
+    ssl_args = {}
+    if use_https:
+        ssl_args = {
+            "ssl_keyfile": str(Path(__file__).with_name("server.key")),
+            "ssl_certfile": str(Path(__file__).with_name("server.crt")),
+        }
+    uvicorn.run(app, host=host, port=port, **ssl_args)
 
 
 if __name__ == "__main__":
