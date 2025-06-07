@@ -78,6 +78,17 @@ This system tracks your face position:
 - **Movement**: Move your face left/right/up/down to control your character
 - **Actions**: Define motion regions that trigger specific actions when movement is detected
 
+### Using a Mobile Camera
+
+You can also control the game from a phone connected to the same network. Run:
+
+```bash
+python -m mobile.server
+```
+
+Open the provided URL on your phone and allow camera access. The captured frames
+will be sent to the host and processed as if a local webcam were used.
+
 ## ⚙️ Configuration
 
 Both control systems have interactive setup processes for first-time users:

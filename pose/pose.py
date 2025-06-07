@@ -158,23 +158,35 @@ class PoseGestureController:
             simulate_key_press(self.horizontal_key)
             print(f"Moving {direction}")
 
-    def start(self):
-        """Start the pose-based gesture control"""
-        print("Starting pose gesture control...")
-
-        # Initialize camera
-        self.cap = cv2.VideoCapture(0)
-        if not self.cap.isOpened():
-            print("Error: Could not open camera.")
-            return
-
-        print("Pose tracking activated. Press ESC to exit.")
-        print("Movement controls: Lean left/right to move your character")
-
+    def _camera_frames(self):
+        """Generator yielding frames from the local webcam"""
         while self.cap.isOpened():
             frame = capture_frame(self.cap)
             if frame is None:
                 break
+            yield frame
+
+    def start(self, frame_generator=None):
+        """Start the pose-based gesture control
+
+        Args:
+            frame_generator: Optional generator yielding frames. If None, the
+            built-in webcam is used.
+        """
+        print("Starting pose gesture control...")
+
+        if frame_generator is None:
+            # Initialize camera
+            self.cap = cv2.VideoCapture(0)
+            if not self.cap.isOpened():
+                print("Error: Could not open camera.")
+                return
+            frame_generator = self._camera_frames()
+
+        print("Pose tracking activated. Press ESC to exit.")
+        print("Movement controls: Lean left/right to move your character")
+
+        for frame in frame_generator:
 
             # Process the frame with MediaPipe Pose
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -235,7 +247,8 @@ class PoseGestureController:
         if self.horizontal_key is not None:
             simulate_key_release(self.horizontal_key)
 
-        self.cap.release()
+        if self.cap and self.cap.isOpened():
+            self.cap.release()
         cv2.destroyAllWindows()
         print("Pose gesture control terminated.")
 
