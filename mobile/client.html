@@ -12,9 +12,11 @@
     <video id="video" autoplay></video>
     <script>
         const video = document.getElementById('video');
-        navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
             video.srcObject = stream;
-            const ws = new WebSocket(`ws://${location.host}/ws`);
+            const ws_scheme = location.protocol === "https:" ? "wss" : "ws";
+            const ws = new WebSocket(`${ws_scheme}://${location.host}/ws`);
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             ws.onopen = () => {
@@ -26,9 +28,12 @@
                     ws.send(data);
                 }, 100);
             };
-        }).catch(err => {
-            document.body.innerHTML = '<p>Camera access denied.</p>';
-        });
+            }).catch(err => {
+                document.body.innerHTML = '<p>Camera access denied.</p>';
+            });
+        } else {
+            document.body.innerHTML = '<p>Camera access is not supported in this browser. Please use HTTPS or a secure context.</p>';
+        }
     </script>
 </body>
 </html>
